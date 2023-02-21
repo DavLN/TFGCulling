@@ -18,6 +18,7 @@ struct Constants
     float4x4 WorldViewProj;
     uint DrawMeshlets;
 
+    float3 CullViewPosition;
 	float incrementalControlPointDeformation;
 };
 
@@ -143,11 +144,7 @@ float3 NurbsEval2(int spf, float posKnotsU, float posKnotsV, float m, float l) {
 	float inicU[4], inicV[4], finU[4], finV[4];
 
 	float us[4], vs[4];
-	
-	float bijX = 0;
-	float bijY = 0;
-	float bijZ = 0;
-
+	float bijX, bijY, bijZ;
 	float aux2;
 
 	float ml;
@@ -214,12 +211,14 @@ float3 NurbsEval2(int spf, float posKnotsU, float posKnotsV, float m, float l) {
 		for (int j = posKnotsV; j >= inKntV; j--) {
 
 			inicPatch = inicioSpf + i + dimX * j;	//killeroo							
+			//inicPatch=inicioSpf+i*dimX+j;	 //resto?
+
 
 			if (spf % 10 == 0 && j % 5 == 0) {
 				bijX = ptos[inicPatch].x + Globals.incrementalControlPointDeformation * (spf % 2);
 				bijY = ptos[inicPatch].y + Globals.incrementalControlPointDeformation * ((spf % 2) - 1);
 				bijZ = ptos[inicPatch].z - Globals.incrementalControlPointDeformation * (spf % 2);
-				
+
 			}
 			else {
 				bijX = ptos[inicPatch].x;
@@ -228,7 +227,6 @@ float3 NurbsEval2(int spf, float posKnotsU, float posKnotsV, float m, float l) {
 			}
 
 			hij = pesos[inicPatch];
-			
 			aux = mul(hij, (mul(nik[ii], mjl[jj])));
 
 			dvsr += mul(hij, (mul(nik[ii], mjl[jj])));

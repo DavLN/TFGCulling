@@ -8,7 +8,7 @@ VertexOut GetVertexAttributes(uint meshletIndex, uint indice)
 	float posU, posV;
 	int iu, iv;
 	VertexOut vout;
-
+	
 
 	// Start Position on knotsU & knotsV vector depending on surface Id
 	int surfaceId = ks[4 * meshletIndex];
@@ -77,10 +77,19 @@ VertexOut GetVertexAttributes(uint meshletIndex, uint indice)
 void main(
 	uint gtid : SV_GroupThreadID,
 	uint gid : SV_GroupID,
+	in payload Payload payload,
 	out indices uint3 tris[128],
 	out vertices VertexOut verts[81]
 )
 {
+	// Extraction of ksquadId to render from Amplification shader stage
+	uint ksquadId = payload.MeshletIndices[gid];
+
+	// No renderization of a ksquad number higher than the total number of them
+	if (ksquadId >= ksquadsTotal[0]) {
+		return;
+	}
+
 	SetMeshOutputCounts(81, 128);
 
 	if (gtid < 128)
@@ -89,6 +98,6 @@ void main(
 	}
 	if (gtid < 81)
 	{
-		verts[gtid] = GetVertexAttributes(gid, gtid);
+		verts[gtid] = GetVertexAttributes(ksquadId, gtid);
 	}
 }
