@@ -18,6 +18,7 @@ struct Constants
     float4x4 WorldViewProj;
     uint DrawMeshlets;
 
+    float3 CullViewPosition;
 	float incrementalControlPointDeformation;
 };
 
@@ -214,6 +215,8 @@ float3 NurbsEval2(int spf, float posKnotsU, float posKnotsV, float m, float l) {
 		for (int j = posKnotsV; j >= inKntV; j--) {
 
 			inicPatch = inicioSpf + i + dimX * j;	//killeroo							
+			//inicPatch=inicioSpf+i*dimX+j;	 //resto?
+
 
 			if (spf % 10 == 0 && j % 5 == 0) {
 				bijX = ptos[inicPatch].x + Globals.incrementalControlPointDeformation * (spf % 2);
